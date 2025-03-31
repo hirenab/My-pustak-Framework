@@ -1,17 +1,16 @@
-name: Selenium Test Automation
+name: Run API and UI Tests
 
 on:
   push:
     branches:
-      - main  # Runs on push to main branch
+      - main
   pull_request:
     branches:
-      - main  # Runs on pull requests to main branch
-  workflow_dispatch:  # Allows manual triggering
+      - main
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Uses the latest Ubuntu runner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -20,23 +19,35 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.8"  # Match your project’s Python version
+          python-version: "3.8"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Install from requirements file
+          pip install -r requirements.txt
 
-      - name: Set up Chrome and ChromeDriver
-        uses: browser-actions/setup-chrome@v1  # Installs latest Chrome
-          
-      - name: Run Selenium Tests
+      - name: Install Chrome & ChromeDriver
         run: |
-          pytest --html=report/test_report.html --self-contained-html
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          wget -q "https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver
+          chromedriver --version
+          google-chrome --version
 
-      - name: Upload Test Report
-        if: always()  # Ensures upload even if tests fail
+      - name: Run API Tests
+        run: |
+          pytest --maxfail=5 --disable-warnings --html=report/api_test_report.html
+
+      - name: Run UI Tests (Selenium)
+        run: |
+          pytest tests/ui_tests --maxfail=5 --disable-warnings --html=report/ui_test_report.html
+
+      - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
-          name: test-report
-          path: report/test_report.html
+          name: test-reports
+          path: report/
