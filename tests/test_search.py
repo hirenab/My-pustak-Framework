@@ -1,4 +1,7 @@
 from pages.search_page import SearchPage
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pytest
 
 @pytest.mark.parametrize("search_query, expected_result", [
@@ -10,16 +13,18 @@ def test_search_functionality(setup_teardown, search_query, expected_result):
     search_page = SearchPage(driver)
 
     search_page.search_item(search_query)
+
+    # Wait for search results to appear
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, '/html/body/main/div[3]/div/div/div/div[2]/div[2]/div[5]/div/div/div/div/div[1]/div[1]/div/div/div/div[3]/h2[1]'))  # Check if this is correct
+    )  
+
     book_titles = search_page.get_search_results()
-
-    if search_query == "Harry Potter":
-        assert any(expected_result in title.text for title in book_titles), "Relevant books not found!"
-    elif search_query == "":
-        assert len(book_titles) > 0, "No books found when searching without input!"
+    if search_query:
+        assert any(expected_result in title.text for title in book_titles), f"Relevant books not found for '{search_query}'!"
     else:
-        assert len(book_titles) > 0, "Unfortunately the page you are looking for has been moved or deleted"
+        assert len(book_titles) > 0, "No books found when searching without input!"
 
-import pytest
 
 @pytest.mark.parametrize("search_query, expected_behavior", [("!@#$%^&*()_+", "404 Error !")])
 def test_special_character_search(setup_teardown, search_query, expected_behavior):
