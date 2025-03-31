@@ -33,6 +33,14 @@ class LoginPage:
         self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='password']"))).clear()
         password_input = self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='password']")))
         password_input.send_keys(password)
+    
+    def perform_login(self, email, password):
+        """Complete login process with given email and password."""
+        self.click_login_button()
+        self.enter_email(email)
+        self.click_proceed()
+        self.enter_password(password)
+        self.click_login()
 
     def click_login(self):
         """Clicks the final login button."""
@@ -49,3 +57,4 @@ class LoginPage:
         except :
             return None  # Return None if no error appears
 
+    
