@@ -1,13 +1,11 @@
 import pytest
 from selenium import webdriver
 
-LOGIN_URL = "https://www.mypustak.com/"
-
-@pytest.fixture(scope='function')
+@pytest.fixture
 def setup_teardown():
-    """Fixture to set up and tear down WebDriver."""
-    driver = webdriver.Chrome()
-    driver.get(LOGIN_URL)
+    """Setup and teardown WebDriver session."""
+    driver = webdriver.Chrome()  # Update if using another browser
     driver.maximize_window()
+    driver.get("https://mypustak.com")  # Replace with actual URL
     yield driver
     driver.quit()

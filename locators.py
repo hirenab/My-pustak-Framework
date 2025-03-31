@@ -11,3 +11,4 @@ SEARCH_BAR_XPATH = '//input[@id="gsearch"]'
 SEARCH_BUTTON_XPATH = '//button[@id="searchId"]'
 RESULT_TITLES_XPATH = '//*[contains(@class, "search-page")]/div/div/div/div/div/div[1]'
 ERROR_MESSAGE_XPATH = '//*[contains(@class, "title-error")]'
+NEXT_BUTTON_XPATH = "//button[@type='submit' or text()='Next']"
