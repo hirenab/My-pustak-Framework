@@ -32,7 +32,7 @@ jobs:
           
       - name: Run Selenium Tests
         run: |
-          pytest tests/test_login.py --html=report/test_report.html --self-contained-html
+          pytest --html=report/test_report.html --self-contained-html
 
       - name: Upload Test Report
         if: always()  # Ensures upload even if tests fail
