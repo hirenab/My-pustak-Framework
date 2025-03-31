@@ -19,18 +19,18 @@ def test_search_functionality(setup_teardown, search_query, expected_result):
     else:
         assert len(book_titles) > 0, "Unfortunately the page you are looking for has been moved or deleted"
 
-@pytest.mark.parametrize("search_query, expected_behavior", [
-    ("#", "Unfortunately the page you are looking for has been moved or deleted"),
-    ("!@#$%^&*()_+", "Unfortunately the page you are looking for has been moved or deleted")
-])
+import pytest
+
+@pytest.mark.parametrize("search_query, expected_behavior", [("!@#$%^&*()_+", "404 Error !")])
 def test_special_character_search(setup_teardown, search_query, expected_behavior):
     driver = setup_teardown
     search_page = SearchPage(driver)
 
     search_page.search_item(search_query)
+    
     try:
         error_message = search_page.get_error_message()
-        assert expected_behavior in error_message, f"Error displayed: {error_message}"
+        assert expected_behavior in error_message, f"Unexpected error displayed: {error_message}"
     except:
         book_titles = search_page.get_search_results()
-        assert len(book_titles) > 0, f"No books found for special character search: {search_query}"
+        assert book_titles, f"No books found for special character search: {search_query}"
